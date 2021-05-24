@@ -41,7 +41,7 @@ The top five colors (its palette) is:
 [(215, 216, 218), (43, 47, 48), (102, 105, 106), (112, 116, 116), (92, 100, 100)]
 
 Therefore the user vector becomes:
-user vector: 255 255 0 215 216 218
+- user vector: 255 255 0 215 216 218
 
 The first three slots represent the RGB values for yellow [255, 255, 0], and the second three slots represent the top color from the animal image (in this case: [215, 216, 218]).
 
@@ -55,18 +55,18 @@ Continuing with this example:
 A 2D array is created from all cover art vectors of that particular genre and the closest eleven “points” in this 6-dimensional space to the user’s response-created vector are returned with their associated album ID’s. We then craft the curation entry for DynamoDB so the front-end can present the newly created curation. Ten of these closest points are presented immediately as a curation; the eleventh is saved as a recommendation to present on the user’s homepage. 
 
 At this point, the recommendation is shown below as copied from the cloudwatch event (leaving out all extraneous data that is also included):
-Reduxer: vector = 226 232 221 83 160 159
-Other Here Comes The Cowboy Demo: vector = 172 157 144 171 136 49
-Mayonnaise: vector = 243 225 224 84 151 181
-A Letter To My Younger Self: vector = 67 75 15 216 204 170
-The slow rush: vector = 147 34 17 199 185 164
-We Are the 21st Century Ambassadors of Peace & Magic: vector = 179 29 29 228 226 225
-Hozier: vector = 119 103 83 151 180 195
-Songs from the west coast: vector = 111 87 49 208 204 203
-Dirty Heads: vector = 194 114 25 240 225 206
-How To Be A Human Being = vector = 209 129 61 246 233 200
+- Reduxer: vector = 226 232 221 83 160 159
+- Other Here Comes The Cowboy Demo: vector = 172 157 144 171 136 49
+- Mayonnaise: vector = 243 225 224 84 151 181
+- A Letter To My Younger Self: vector = 67 75 15 216 204 170
+- The slow rush: vector = 147 34 17 199 185 164
+- We Are the 21st Century Ambassadors of Peace & Magic: vector = 179 29 29 228 226 225
+- Hozier: vector = 119 103 83 151 180 195
+- Songs from the west coast: vector = 111 87 49 208 204 203
+- Dirty Heads: vector = 194 114 25 240 225 206
+- How To Be A Human Being = vector = 209 129 61 246 233 200
 
-The albums shown above were the closest 10 points to the user vector  255 255 0 215 216 218 using each vector element as a coordinate in 6D space. 
+The albums shown above were the closest 10 points to the user vector 255 255 0 215 216 218 using each vector element as a coordinate in 6D space. 
 
 As the user “likes” cover art in their curations, a lambda scans the DynamoDB instance every hour for these likes and adds recommended albums to the database. Users can view their personalized recommendations on the homepage. For example, if the user likes an album by Milky Chance, the service will recommend other cover art by Milky Chance not already present in the recommendation list. 
 
