@@ -76,7 +76,7 @@ The service scales such that new albums may be added to the database in which ca
 
 
 ## Architecture Diagram:
-[Architecture Diagram file](./Project_Architecture.png)
+![Architecture Diagram file](./Project_Architecture.png)
 
 
 
