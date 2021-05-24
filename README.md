@@ -1,4 +1,4 @@
-## Album cover curation and playlist maker
+# Album cover curation and playlist maker
 Term project for Columbia CS Course 6998 Cloud Computing and Big Data
 
 
@@ -8,7 +8,7 @@ Term project for Columbia CS Course 6998 Cloud Computing and Big Data
 
 
 
-# Key Architectural Components
+## Key Architectural Components
 - Web front-end: We used the Amplify javascript SDK, storing all static website files in an S3 bucket. The service is publicly available here. We decided to deploy our front-end using React-Bootstrap. This approach allowed us to decompose our code into reusable components, for example the “card-based” feature to display the album covers and metadata. We leveraged various Bootstrap elements, including the Navbar and Container system for dynamically resizing the view based on screen size and device type. We also opted to deploy GraphQL as an API, which offered key benefits in terms of page load time and overall scalability. 
 - Cognito is utilized to keep a verified user-pool so users may return to previous curations over time. 
 - Lex/Lambda. We have opted for a chatbot component to gather user data and preferences. This is deployed using Lex and an accompanying Lambda function to do slot filling and validation.
@@ -20,7 +20,7 @@ Term project for Columbia CS Course 6998 Cloud Computing and Big Data
 - SES. After a curation is created, a playlist is assembled from the recommended album covers and sent to the users’ email with links to song previews. 
 - Several SQS queues are used between lambdas to ensure prompt responses during lex interactions and to allow for scalability of the service such that many users may search for recommendations at once. 
 
-# User interaction flow:
+## User interaction flow:
 - The user creates an account or logs into their existing account
 - Users interact with the chatbot interface, answering posed questions, or upload images
 - The service extracts applicable information from user responses, or performs analysis on the user-uploaded image, and runs several lambdas to build a relevant recommendation.
@@ -74,6 +74,9 @@ The recommendation list on the homepage is treated as a FIFO queue: as more cura
 
 The service scales such that new albums may be added to the database in which case new curation requests with previously used responses will result in updated curations. 
 
+
+## Architecture Diagram:
+[Architecture Diagram file](./Project_Architecture.png)
 
 
 
