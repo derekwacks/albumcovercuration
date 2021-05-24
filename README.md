@@ -18,7 +18,7 @@ Term project for Columbia CS Course 6998 Cloud Computing and Big Data
 - Users interact with the chatbot interface, answering posed questions, or upload images
 - The service extracts applicable information from user responses, or performs analysis on the user-uploaded image, and runs several lambdas to build a relevant recommendation.
 - After a curated playlist has been assembled with album art, the service posts it to the user’s library and sends it to their email.
-
+[Link to demo] https://www.youtube.com/watch?v=ZL0-1DzyLkk
 [Link to demo]: https://www.youtube.com/watch?v=ZL0-1DzyLkk
 
 [Link to service]: https://dev.d2zsw1rsygdyul.amplifyapp.com
