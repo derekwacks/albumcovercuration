@@ -4,7 +4,7 @@ Term project for Columbia CS Course 6998 Cloud Computing and Big Data
 
 [Link to demo](https://www.youtube.com/watch?v=ZL0-1DzyLkk "Demo Link")
 
-[Link to service](https://dev.d2zsw1rsygdyul.amplifyapp.com "App Link")
+[Link to live Amplify App](https://dev.d2zsw1rsygdyul.amplifyapp.com "App Link")
 
 
 
