@@ -20,9 +20,7 @@ Term project for Columbia CS Course 6998 Cloud Computing and Big Data
 - After a curated playlist has been assembled with album art, the service posts it to the user’s library and sends it to their email.
 
 
-[Link to demo] https://www.youtube.com/watch?v=ZL0-1DzyLkk
+[Link to demo] (https://www.youtube.com/watch?v=ZL0-1DzyLkk "Demo Link")
 
-[Link to service] https://dev.d2zsw1rsygdyul.amplifyapp.com
+[Link to service] (https://dev.d2zsw1rsygdyul.amplifyapp.com "App Link")
 
-
-test
