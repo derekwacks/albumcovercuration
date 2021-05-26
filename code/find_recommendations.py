@@ -4,10 +4,8 @@ import numpy as np
 import boto3
 
 
-#access_key_id = os.environ['aws_access_key_id']
-#secret_access_key = os.environ['aws_secretkey']
-access_key_id = "AKIAT4WCTUCFY2RUJE4V"
-secret_access_key = "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"
+access_key_id = os.environ['aws_access_key_id']
+secret_access_key = os.environ['aws_secretkey']
 
 s3 = boto3.client('s3', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
