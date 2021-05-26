@@ -1,5 +1,6 @@
 # Album cover curation and playlist maker
 Term project for Columbia CS Course 6998 Cloud Computing and Big Data
+
 In collaboration with Jay Preston (jlp2247 at columbia dot edu)
 
 
