@@ -1,11 +1,9 @@
 import colorthief
-#import colorthief.ColorThief
 from colorthief import ColorThief
 from PIL import Image
 from urllib.request import urlopen
 import io
 import ssl
-
 import boto3
 from decimal import Decimal
 import os
@@ -23,11 +21,8 @@ region = "us-west-2"
 img_bucket_name = "albumprojectup195958-dev"
 s3 = boto3.client('s3', aws_access_key_id=access_key_id, aws_secret_access_key = secretkey, region_name = region )
 
-
 #Setting up SQS
-
 queue_name = "music_rec_queue2"
-
 sqs = boto3.resource('sqs', aws_access_key_id = access_key_id,
     aws_secret_access_key = secretkey)
     
@@ -35,10 +30,7 @@ sqs = boto3.resource('sqs', aws_access_key_id = access_key_id,
 queue = sqs.get_queue_by_name(QueueName=queue_name)
 print(queue.url)
 print(queue.attributes.get('DelaySeconds'))
-
-
 print('Loading function')
-
 
 
 def create_vector(palette_vec):
@@ -56,7 +48,6 @@ def create_vector(palette_vec):
     return vector # string 
 
 
-
 def create_art_vector(image_key):
     """
     Given S3 key and url to photo in S3, returns vector
@@ -70,13 +61,9 @@ def create_art_vector(image_key):
         print(image_url)
         response = s3.get_object(Bucket=img_bucket_name, Key=image_key)
         image = response['Body']
-        
-        ##user =  response['Metadata']['username'] ### ADDED HERE
-        
         print("file read", image)
     
         # Delete image from S3 image bucket
-        # put_resp = s3.put_object(ACL='public-read-write', Body=f, Bucket=img_bucket_name, Key=image_key)
         del_resp = s3.delete_object(Bucket=img_bucket_name, Key=image_key)
         print("Delete response:", del_resp)
         
@@ -98,7 +85,6 @@ def push_to_queue(vector, username, user_email):
     import random
     genres = ['hiphop', 'pop', 'alternative', 'country', 'rock']
     genre = random.choice(genres)
-    
     mbody = "Client recommendation request"+str(random.random())
     attr = {
         'vector': {
@@ -117,20 +103,15 @@ def push_to_queue(vector, username, user_email):
             'DataType': 'String',
             'StringValue': str(user_email)
         }
-        
     }
     # SENDING MESSAGE TO SQS
-    
-
     response = queue.send_message(MessageBody=mbody, MessageAttributes=attr) # , MessageGroupId=groupid
     print(response.get('MessageId'))
     return response
  
  
 def get_username_and_email():
-    #bucket_name = "albumprojectup195958-dev"
     bucket_name = "cover-art-vectors"
-    
     f_key = "user.txt"
     file = s3.get_object(Key=f_key, Bucket=bucket_name)
     file_r = file['Body'].iter_lines()
@@ -143,7 +124,6 @@ def get_username_and_email():
     return ret
 
 
-# SWITCHOUT
 def parse_file_name(key):
     #Ex: public/test#test@gmail.com#djw_bird2.jpg
     key = key[7:]
@@ -159,24 +139,15 @@ def lambda_handler(event, context):
     # Get the object from the event
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
-    
     print("Event", event)
     logger.debug("\nEvent debug "+bucket+ " "+key)
-    
     try:
         # create 6d vectors from top two colors in newly uploaded user image
-        # SWITCHOUT
         orig_key = key 
         username, user_email, key = parse_file_name(key)
         print("info pulled from key:", key, username, user_email)
-        #ret = get_username_and_email()
-        #username = ret[0]
-        #user_email = ret[1]
-        
         vec = create_art_vector(orig_key) #(vec, user)
         vec = create_vector(vec)
-        #vec = ret[0]
-        #user = ret[1]
         print("\n6d vector created: ", vec)
         # Now push vector and a random genre to the queue
         response = push_to_queue(vec, username, user_email)

@@ -5,26 +5,20 @@ import os
 import random 
 
 TABLE_NAME = 'Curation-2asrsupzz5auhprcbtbpba72ze-dev'
-
 access_key_id = os.environ['access_key_id']
 secret_access_key = os.environ['secret_access_key']
 userpool_id = os.environ['userpool_id']
-
-
 dynamodb = boto3.client('dynamodb', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
-                  region_name="us-west-2")
-                  
+                  region_name="us-west-2")             
 dynamodbRESOURCE = boto3.resource('dynamodb', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
-                  region_name="us-west-2")
-                  
+                  region_name="us-west-2")           
 cognito = boto3.client('cognito-idp', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
                   region_name="us-west-2")           
            
-           
-           
+             
 def get_users():
     list_of_users = []
     resp = cognito.list_users(
@@ -33,11 +27,9 @@ def get_users():
     ) 
     for user in resp["Users"]:
         list_of_users.append(user["Username"])
-    
     return list_of_users
 
-           
-            
+                
 def update_top_recs(user):
     # Query for current rec entry 
     new_list = []
@@ -65,8 +57,6 @@ def update_top_recs(user):
         for item in current_top_recs:
             new_list.append(item['S'])
             curr_rec_set.add(item['S'])
-    
-        
     # GET NEW REC BASED ON LIKES HERE
     new_top_rec = scan_get_rec(user)
     print(user, ":", new_top_rec)
@@ -74,11 +64,8 @@ def update_top_recs(user):
         # if it happens to be in curr_rec_set, we redraw
         while(new_top_rec in curr_rec_set):
             new_top_rec = scan_get_rec(user)
-            
-
         new_list.append(new_top_rec)
     print("NEW top recs", new_list)
-    
     table = dynamodbRESOURCE.Table(TABLE_NAME)
     entry = {
         'id': "Rec",
@@ -100,13 +87,11 @@ def get_rec(user):
     
 def scan_get_rec(user):
     table = dynamodbRESOURCE.Table(TABLE_NAME)
-
     scan_kwargs = {
         'FilterExpression': Key('user').eq(user) & Key('like').eq(1)
         #'ProjectionExpression': "#yr, title, info.rating",
         #'ExpressionAttributeNames': {"#yr": "year"}
     }
-
     done = False
     start_key = None
     while not done:
@@ -115,8 +100,6 @@ def scan_get_rec(user):
         response = table.scan(**scan_kwargs)
         start_key = response.get('LastEvaluatedKey', None)
         done = start_key is None
-
-
     # response now has a list of entries with likes
     # Get random index
     if len(response["Items"]) > 0:
@@ -131,7 +114,6 @@ def scan_get_rec(user):
     return selection
  
     
-    
 def get_new_album_entry(artist):
     table = dynamodbRESOURCE.Table("Albums_test")
     scan_kwargs = {
@@ -145,7 +127,6 @@ def get_new_album_entry(artist):
         response = table.scan(**scan_kwargs)
         start_key = response.get('LastEvaluatedKey', None)
         done = start_key is None
-    
     # Get random entry
     if len(response["Items"]) > 0:
         idx = random.randint(0, len(response["Items"])-1)
@@ -159,12 +140,9 @@ def get_new_album_entry(artist):
 def lambda_handler(event, context):
     user_list = get_users()
     print(user_list)
-    
     # For each user in the userpool, check their likes and add a rec
     for user in user_list: 
-        update_top_recs(user)
-        
-        
+        update_top_recs(user) 
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
