@@ -1,5 +1,4 @@
 import json
-
 import boto3
 import math
 import dateutil.parser
@@ -9,7 +8,6 @@ import os
 import logging
 import random
 from botocore.config import Config
-
 import matplotlib.colors as colors
 from colorthief import ColorThief
 from urllib.request import urlopen
@@ -17,16 +15,11 @@ import io
 import ssl
 import requests
 
-
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
 access_key_id = os.environ['aws_access_key_id']
 secret_access_key = os.environ['secretkey']
 unsplash_access_key = os.environ['unsplash_access_key']
-
-
-
 my_config = Config(
     region_name='us-west-2',
     signature_version='v4',
@@ -36,21 +29,20 @@ my_config = Config(
     }
 )
 
-
 # Setting up SQS
 sqs = boto3.resource('sqs', aws_access_key_id=access_key_id,
-                     aws_secret_access_key=secret_access_key, region_name='us-west-2')
-                     
+                     aws_secret_access_key=secret_access_key, region_name='us-west-2')                  
 # Get the queue. This returns an SQS.Queue instance
-queue_name = "music_rec_queue2" # SECOND QUEUE
+queue_name = "music_rec_queue2"
 queue = sqs.get_queue_by_name(QueueName=queue_name)
 print(queue.url)
+
 
 def get_colors(image):
     """
     :param image: image to be analyzed
     :param fav_color: favorite color
-    :return:
+    :return: palette[0] top color from image
     """
     # Gets most prominent color in the image
     color_count = 5
@@ -83,7 +75,6 @@ def create_vector(animal_ani, fav_color):
     col_2 = animal(animal_ani)
     vector = col_1 + col_2
     vec_as_str = ""
-    # items in vector are floats 
     for i in vector:
         addition = str(int(i)) + " "
         vec_as_str += addition
@@ -112,13 +103,8 @@ def send_to_queue2(vector, genre, username, user_email):
             'StringValue': str(user_email)
         }
     }
-    
     # SENDING MESSAGE TO SQS
     response = queue.send_message(MessageBody=mbody, MessageAttributes=attr)
-    
-    #print("\nWOULD HAVE SENT TO QUEUE HERE\n")
-    #response = "bypassing sent to queue"
-    
     print("SENT to queue:", response.get('MessageId'))
     return response
 
@@ -134,46 +120,24 @@ def test():
 
 
 def lambda_handler(event, context):
-    """
-    ret = test()
-    print(ret)
-    """
     # Get user_vector from event
-    # READ rec and genre FROM queue!
+    # Read rec and genre from queue
     messagebody = 'no message'
     for message in event['Records']:
         stuff = ''
         print(message)
-        #logger.debug(message)
         if len(message)>0: #is not None:
-
             # Get vector and genre from message
             animal = message['messageAttributes']['animal']['stringValue']
             fav_color = message['messageAttributes']['fav_color']['stringValue']
             genre = message['messageAttributes']['genre']['stringValue']
             username = message['messageAttributes']['username']['stringValue']
             user_email = message['messageAttributes']['user_email']['stringValue']
-
             vector = create_vector(animal, fav_color)
-
             # send to queue2
             ret = send_to_queue2(vector, genre, username, user_email)
             print("sending to queue response:", ret)
             return ret
-            
-           # "0 10 11 12" -> [0, 10, 11, 12] str to list of ints
-            #vector = [int(i) for i in vector_str.split()]    
-            
-    #        print(vector_str, "->", vector)
-    #        recs = get_recs(vector, genre)
-    #        print(recs)
-          
-            # pass album id's from recommendation to playlist maker lambda
-            # "playlist_curator_from_queue"
-            ###return recs  # list of entry id's
-
-   
-
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
