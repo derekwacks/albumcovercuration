@@ -8,19 +8,12 @@ import os
 
 access_key_id = os.environ['access_key_id']
 secret_access_key = os.environ['secret_access_key']
-
-
 s3 = boto3.client('s3', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
                   region_name="us-west-2")
-                  
-                  
-
 lambda_client = boto3.client('lambda', aws_access_key_id=access_key_id,
                   aws_secret_access_key=secret_access_key,
-                  region_name="us-west-2")
-      
-                  
+                  region_name="us-west-2")          
 # Setting up SQS
 sqs = boto3.resource('sqs', aws_access_key_id=access_key_id,
                      aws_secret_access_key=secret_access_key, region_name='us-west-2')
@@ -49,29 +42,12 @@ def send_to_queue(data_as_list):
     animal = data_as_list[1]
     fav_color = data_as_list[2]
     genre = data_as_list[3]
-    """
-    # Get user data from dynamoDB table
-    TABLE_NAME = "Curation-66get7pmenf3vjacu2xats23xa-dev"
-    resp = dynamodb.get_item(
-    TableName=TABLE_NAME,
-    Key={
-        'id': {
-            'S': lexid
-        }
-    })
-    if "Item" in resp.keys():
-        username = resp['Item']['username']
-        user_email = resp['Item']['email']
-    """
     sleep(1)
     resp = get_user_data_from_table(lexid)
-    
     if "Items" in resp.keys():
         username = resp['Items'][0]['user']
         user_email = resp['Items'][0]['name']
-    
     print("User info:", username, user_email)
-    
     # Sending to queue 1
     mbody = "Client recommendation request" + str(random.random())
     attr = {
@@ -95,14 +71,11 @@ def send_to_queue(data_as_list):
             'DataType': 'String',
             'StringValue': str(user_email)
         }
-    }  
-    
-    
+    }
     # SENDING MESSAGE TO SQS
     response = queue.send_message(MessageBody=mbody, MessageAttributes=attr)
     print(response.get('MessageId'))
     return response
-
 
 
 def lambda_handler(event, context):
@@ -110,10 +83,8 @@ def lambda_handler(event, context):
     data = event['data'] # string of lexid, animal, color, genre separated by " "
     data_as_list = data.split(" ")
     print("Data", data_as_list)
-    
     resp = send_to_queue(data_as_list)
     print(resp)
-    
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
